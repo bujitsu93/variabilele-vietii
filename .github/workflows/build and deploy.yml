@@ -54,7 +54,7 @@ jobs:
           DEPLOY_FILE="config-repo/actiune-1/${{ github.event.inputs.environment }}/deployment.yaml"
           echo "DEPLOY_FILE is $DEPLOY_FILE"
 
-        #  cd config-repo
+          #cd config-repo
           yq e -i '.spec.template.spec.containers[0].image = "${env.REGISTRY}/${env.IMAGE_NAME}-${env.SHORT_SHA}"' "$DEPLOY_FILE"
 
           echo "New image value:"
