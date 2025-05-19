@@ -59,4 +59,8 @@ jobs:
 
           echo "New image value:"
           yq e '.spec.template.spec.containers[0].image' "$DEPLOY_FILE"
+        env:
+          SHORT_SHA: ${{ env.SHORT_SHA }}
+          REGISTRY: ${{ env.REGISTRY }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
           
