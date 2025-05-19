@@ -54,6 +54,16 @@ jobs:
           echo "Working dir: $(pwd)"
           ls -R config-repo
           echo "Listing config-repo directory..."
+
+      - name: Show directory structure
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Top level:"
+          ls -l
+          echo "Inside config-repo:"
+          ls -l config-repo
+          echo "Inside config-repo/config/dev:"
+          ls -l config-repo/config/dev
       
       - name: Update deployment file
         run: |
