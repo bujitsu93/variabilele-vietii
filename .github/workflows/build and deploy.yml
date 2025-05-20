@@ -98,3 +98,17 @@ jobs:
           REGISTRY: ${{ env.REGISTRY }}
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
         
+      - name: Commit and push deployment file
+        run: |
+          git config user.name "bujitsu93"
+          git config user.email "useful.bujicu@gmail.com"
+
+          git add config/${{ github.event.inputs.environment }}/deployment.yaml
+
+          git commit -m "Update deployment image to ${IMAGE_NAME}-${SHORT_SHA}" || echo "No changes to commit"
+
+          git push origin main
+
+        env:
+          SHORT_SHA: ${{ env.SHORT_SHA }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
