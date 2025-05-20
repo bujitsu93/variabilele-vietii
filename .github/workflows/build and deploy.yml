@@ -86,6 +86,10 @@ jobs:
 
           echo "New image value:"
           yq e '.spec.template.spec.containers[0].image' "$DEPLOY_FILE"
+
+          echo "Full updated deployment.yaml file:"
+          cat "${DEPLOY_FILE}"
+          
         env:
           SHORT_SHA: ${{ env.SHORT_SHA }}
           REGISTRY: ${{ env.REGISTRY }}
