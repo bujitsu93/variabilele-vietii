@@ -68,6 +68,7 @@ jobs:
       - name: Update deployment file
         run: |
           DEPLOY_FILE="config-repo/config/${{ github.event.inputs.environment }}/deployment.yaml"
+          echo "DEPLOY_FILE=$DEPLOY_FILE" >> $GITHUB_ENV
           echo "DEPLOY_FILE is $DEPLOY_FILE"
 
          
