@@ -65,6 +65,12 @@ jobs:
           echo "Inside config-repo/config/dev:"
           ls -l config-repo/config/dev
       
+      - name: Install yq
+        run: |
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+          sudo chmod +x /usr/bin/yq
+          yq --version
+
       - name: Update deployment file
         run: |
           DEPLOY_FILE="config-repo/config/${{ github.event.inputs.environment }}/deployment.yaml"
@@ -84,10 +90,4 @@ jobs:
           SHORT_SHA: ${{ env.SHORT_SHA }}
           REGISTRY: ${{ env.REGISTRY }}
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
-      
-      - name: Install yq
-        run: |
-          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
-          sudo chmod +x /usr/bin/yq
-          yq --version
         
