@@ -100,6 +100,9 @@ jobs:
         
       - name: Commit and push deployment file
         run: |
+
+          cd config-repo
+          
           git config user.name "bujitsu93"
           git config user.email "useful.bujicu@gmail.com"
 
