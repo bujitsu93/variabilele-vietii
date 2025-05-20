@@ -82,7 +82,7 @@ jobs:
           echo "Initial IMAGE_TAG is $IMAGE_TAG"
 
          
-          yq --env IMAGE_TAG="$IMAGE_TAG" -i '.spec.template.spec.containers[0].image = strenv(IMAGE_TAG)' "$DEPLOY_FILE"
+          yq e -i '.spec.template.spec.containers[0].image = env(IMAGE_TAG)' "$DEPLOY_FILE"
 
           echo "New image value:"
           yq e '.spec.template.spec.containers[0].image' "$DEPLOY_FILE"
