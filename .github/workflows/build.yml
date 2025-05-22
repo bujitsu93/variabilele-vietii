@@ -41,9 +41,3 @@ jobs:
           SHORT_SHA: ${{ env.SHORT_SHA }}
           REGISTRY: ${{ env.REGISTRY }}
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
-
-          git push origin main
-
-        env:
-          SHORT_SHA: ${{ env.SHORT_SHA }}
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
