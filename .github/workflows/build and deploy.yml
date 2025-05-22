@@ -2,11 +2,6 @@ name: Build and Deploy
 on:
   workflow_dispatch:
     inputs:
-      git_ref:
-        description: 'Git branch or Tag to deploy'
-        required: true
-        type: string
-        default: 'main'
       environment:
         description: 'Target environment (dev/int/prod)'
         required: true
