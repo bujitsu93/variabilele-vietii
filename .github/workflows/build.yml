@@ -1,0 +1,49 @@
+name: Build
+on:
+  workflow_dispatch:
+    inputs:
+      git_ref:
+        description: 'Git branch or Tag to deploy'
+        required: true
+        type: string
+        default: 'main'
+      environment:
+        description: 'Target environment (dev/int/prod)'
+        required: true
+        type: string
+        default: 'dev'
+
+env:
+  IMAGE_NAME: app-backend
+  REGISTRY: containers.github.azure.cloud
+  CONFIG_REPO: bujitsu93/actiune-1
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Get Short commit SHA
+        run: |
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
+          echo "SHORT_SHA = $SHORT_SHA"
+
+      - name: build image
+        run: |
+          echo "SHORT_SHA=$SHORT_SHA"
+          DOCKER_TAG="${REGISTRY}/${IMAGE_NAME}-${SHORT_SHA}"
+          echo "DOCKER_TAG=$DOCKER_TAG"
+        env:
+          SHORT_SHA: ${{ env.SHORT_SHA }}
+          REGISTRY: ${{ env.REGISTRY }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+
+          git push origin main
+
+        env:
+          SHORT_SHA: ${{ env.SHORT_SHA }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
