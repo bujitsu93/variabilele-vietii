@@ -19,7 +19,9 @@ jobs:
     steps:
 
       - name: Show target environment chosen
-        run: echo "Deployment will be done on ${{ github.event.inputs.environment }}"
+        run: | 
+          echo "Target environment chosen: ${{ github.event.inputs.environment }}"
+          echo "Deployment will be done on ${{ github.event.inputs.environment }}"
       - name: Checkout repository
         uses: actions/checkout@v3
       
