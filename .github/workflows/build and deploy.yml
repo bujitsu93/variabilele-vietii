@@ -17,7 +17,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      
+
+      - name: Show target environment chosen
+        run: echo "Deployment will be done on ${{ github.event.inputs.environment }}"
       - name: Checkout repository
         uses: actions/checkout@v3
       
