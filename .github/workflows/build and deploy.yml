@@ -5,8 +5,12 @@ on:
       environment:
         description: 'Target environment (dev/int/prod)'
         required: true
-        type: string
         default: 'dev'
+        type: choice
+        options:
+          - dev
+          - int
+          - prod
 
 env:
   IMAGE_NAME: app-backend
