@@ -1,0 +1,36 @@
+name: deploy prod
+
+on:
+  release:
+    types: [published]
+
+env:
+  IMAGE_NAME: app-backend
+  REGISTRY: containers.github.azure.cloud
+  CONFIG_REPO: bujitsu93/actiune-1
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get Short commit SHA
+        run: |
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
+
+      - name: Set version from release tag
+        run: echo "VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+
+      - name: Build image
+        run: |
+          echo "SHORT_SHA=$SHORT_SHA"
+          echo "VERSION=$VERSION"
+          DOCKER_TAG="${REGISTRY}/${IMAGE_NAME}:${VERSION}"
+          echo "DOCKER_TAG=$DOCKER_TAG"
+        env:
+          REGISTRY: ${{ env.REGISTRY }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          VERSION: ${{ env.VERSION }}
