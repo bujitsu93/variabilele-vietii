@@ -26,4 +26,4 @@ jobs:
         with:
           image-name: ${{ env.IMAGE_NAME }}
           registry: ${{ env.REGISTRY }}
-          version: $VERSION
+          version: ${{ env.VERSION }}
