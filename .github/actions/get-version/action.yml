@@ -1,0 +1,7 @@
+name: "Get version - release tag"
+
+runs:
+  using: "composite"
+  steps:
+    - run: echo "VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+      shell: bash
