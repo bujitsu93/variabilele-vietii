@@ -5,13 +5,13 @@ inputs:
     required: true
   registry:
     required: true
+  version:
+    required: true
 runs:
   using: "composite"
   steps:
     - run: |
-        DOCKER_TAG="${{ inputs.registry }}/${{ inputs.image-name }}:${VERSION}"
+        DOCKER_TAG="${{ inputs.registry }}/${{ inputs.image-name }}:${{ inputs.version }}"
         echo "DOCKER_TAG=$DOCKER_TAG"
         echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
       shell: bash
-      env:
-        VERSION: ${{ env.VERSION }} 

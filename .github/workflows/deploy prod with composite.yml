@@ -18,10 +18,12 @@ jobs:
 
  
       - name: Set version from release tag
-        run: echo "VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+        run: |
+          echo "VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
 
       - name: Build image
         uses: ./.github/actions/build-image
         with:
           image-name: ${{ env.IMAGE_NAME }}
           registry: ${{ env.REGISTRY }}
+          version: $VERSION
