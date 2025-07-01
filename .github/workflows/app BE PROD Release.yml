@@ -1,0 +1,87 @@
+name: app BE PROD Release
+on:
+  release:
+    types: [published]
+
+env:
+  IMAGE_NAME: app-backend
+  REGISTRY: containers.atc-github.azure.cloud.buji
+  CONFIG_REPO: bujitsu/app-config
+
+jobs:
+  build:
+    runs-on: [atc-ubuntu-latest]
+    steps:
+
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: setup-java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '21'          
+
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: 3.9.3
+
+      - name: build artifact
+        run: mvn clean package -s $GITHUB_WORKSPACE/settings.xml
+        env:
+          USER: ${{ secrets.PACKAGES_USER }}
+          TOKEN: ${{ secrets.PACKAGES_TOKEN }}
+
+      - name: print build info
+        run: ls -lR      
+
+      - name: Set version from release tag
+        uses: bujitsu/app-config/actions/get-version@main
+
+      - name: Build Docker Image and Push to Github container registry
+        uses: bujitsu/app-config/actions/build-docker-image-and-push-to-github@main
+        with:
+          registry: ${{ env.REGISTRY }}
+          image_name: ${{ env.IMAGE_NAME }}
+          version: ${{ env.VERSION }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+
+      - name: Checkout Config Repository
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ env.CONFIG_REPO }}
+          token: ${{ secrets.CONFIG_REPO_PAT }} #PAT for the Fasana technical user qqzzzfa
+          path: config-repo
+
+      - name: Debug file paths
+        run: |
+          echo "Working dir: $(pwd)"
+          echo "Listing config-repo directory..."
+          ls -R config-repo
+
+      - name: Update deployment YAML file
+        uses: bujitsu/app-config/actions/update-deployment-yaml-file@main
+        with:
+          deployment_file: config-repo/app-backend/prod/deployment.yaml
+          registry: ${{ env.REGISTRY }}
+          image_name: ${{ env.IMAGE_NAME }}
+          version: ${{ env.VERSION }}
+
+      - name: Commit Deployment Update and Push
+        uses: bujitsu/app-config/actions/commit-deployment-update@main
+        with:
+          deployment_file: app-backend/prod/deployment.yaml
+          image_name: ${{ env.IMAGE_NAME }}
+          version: ${{ env.VERSION }}
+          git_user: qqzzzfa
+          git_email: qqzzzfa@bujigroup.net
+
+      - name: Sync the application with ArgoCD
+        uses: bujitsu/app-config/actions/argocd-sync-app@main
+        with:
+          argocd_app: app-backend-prod
+          argocd_server_address: api-argocd-customer.apps.4wm-app-prod.eu-central-1.aws.cloud.buji
+          argocd_token: ${{ secrets.ARGOCD_AUTH_TOKEN_PROD }}
