@@ -33,6 +33,9 @@ jobs:
       ARGOCD_APP: app-backend-${{ github.event.inputs.environment || 'int' }}
     steps:
 
+      - name: Show current time (UTC)
+        run: date -u
+        
       - name: Show target environment chosen
         run: | 
           echo "Target environment chosen: ${{ github.event.inputs.environment || 'int' }}"
