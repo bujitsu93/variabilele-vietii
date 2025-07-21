@@ -9,23 +9,34 @@ on:
         type: choice
         options:
           - dev
-          - int
+        #  - int
           - prod
+  
+  schedule:
+    - cron: '10-59/10 20 * * *' # every day at midnight UTC
 
-env:
-  IMAGE_NAME: app-backend
-  REGISTRY: containers.github.azure.cloud
-  CONFIG_REPO: bujitsu93/actiune-1
+
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    if: github.event_name != 'schedule' || (github.event_name == 'schedule' && github.ref == 'refs/heads/main')
+
+    env:
+      ENVIRONMENT: ${{ github.event.inputs.environment || 'int' }}
+      IMAGE_NAME: app-backend
+      REGISTRY: containers.github.azure.cloud
+      CONFIG_REPO: bujitsu93/actiune-1
+      DEPLOYMENT_FILE: config-repo/app-backend/${{ github.event.inputs.environment || 'int' }}/deployment.yaml
+      DEPLOYMENT_FILE_RELATIVE_PATH: app-backend/${{ github.event.inputs.environment || 'int' }}/deployment.yaml
+      ARGOCD_APP: app-backend-${{ github.event.inputs.environment || 'int' }}
     steps:
 
       - name: Show target environment chosen
         run: | 
-          echo "Target environment chosen: ${{ github.event.inputs.environment }}"
-          echo "Deployment will be done on ${{ github.event.inputs.environment }}"
+          echo "Target environment chosen: ${{ github.event.inputs.environment || 'int' }}"
+        #  echo "Deployment will be done on ${{ github.event.inputs.environment }}"
       - name: Checkout repository
         uses: actions/checkout@v3
       
@@ -76,7 +87,7 @@ jobs:
 
       - name: Update deployment file
         run: |
-          DEPLOY_FILE="config-repo/config/${{ github.event.inputs.environment }}/deployment.yaml"
+          DEPLOY_FILE="config-repo/config/${{ github.event.inputs.environment || 'int' }}/deployment.yaml"
           echo "DEPLOY_FILE=$DEPLOY_FILE" >> $GITHUB_ENV
           echo "DEPLOY_FILE is $DEPLOY_FILE"
 
@@ -109,7 +120,7 @@ jobs:
           git config user.name "bujitsu93"
           git config user.email "useful.bujicu@gmail.com"
 
-          git add config/${{ github.event.inputs.environment }}/deployment.yaml
+          git add config/${{ github.event.inputs.environment || 'int' }}/deployment.yaml
 
           git commit -m "Update deployment image to ${IMAGE_NAME}-${SHORT_SHA}" || echo "No changes to commit"
 

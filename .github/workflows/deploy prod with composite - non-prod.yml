@@ -1,0 +1,28 @@
+name: deploy prod with composite
+
+on:
+  release:
+    types: [published]
+
+env:
+  IMAGE_NAME: app-backend
+  REGISTRY: containers.github.azure.cloud
+  CONFIG_REPO: bujitsu93/actiune-1
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+ 
+      - name: Set version from release tag
+        uses: ./.github/actions/get-version
+
+      - name: Build image
+        uses: ./.github/actions/build-image
+        with:
+          image-name: ${{ env.IMAGE_NAME }}
+          registry: ${{ env.REGISTRY }}
+          version: ${{ env.VERSION }}
