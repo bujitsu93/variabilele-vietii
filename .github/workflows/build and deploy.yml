@@ -9,7 +9,7 @@ on:
         type: choice
         options:
           - dev
-        #  - int
+          - int
           - prod
   
   schedule:
